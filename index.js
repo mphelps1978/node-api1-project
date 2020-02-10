@@ -39,6 +39,7 @@ app.post('/api/users', (req, res) => {
 })
 
 // GET /api/users/:id - Returns a single user
+//  - If user does not exist, return 404
 
 app.get('/api/users/:id', (req, res) => {
   users.findById(req.params.id)
@@ -54,6 +55,10 @@ app.get('/api/users/:id', (req, res) => {
   })
 })
 
+
+// DELETE /api/users/:id - Removes a user from the database
+//   - If user does not exist, return 404
+
 app.delete('/api/users/:id', (req, res) => {
  users.remove(req.params.id)
  .then(user => {
@@ -68,14 +73,24 @@ app.delete('/api/users/:id', (req, res) => {
  })
 })
 
+app.put('/api/users/:id', (req, res) => {
+  const {name, bio} = req.body
 
-
-
-
-
-
-
-
-
+  if (!name || !bio) {
+    res.status(400).json({errorMessage: 'Please provide a name and bio'})
+  } else {
+    users.update(req.params.id, req.body)
+    .then(user => {
+      if(user) {
+        res.status(200).json({user})
+      } else {
+        res.status(404).json({errorMessage: 'The user with the specified ID does not exist'})
+      }
+    })
+    .catch(err =>{
+      res.status(500).json({errorMessage: 'There was an error'})
+    })
+  }
+})
 
 app.listen(port, () => console.log(`\n**app listening on port ${port} !`))

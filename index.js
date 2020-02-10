@@ -1,15 +1,18 @@
 const express = require('express')
 const app = express()
 const port = 5000
+const cors = require('cors')
 
 app.use(express.json())
+app.use(cors())
+
 const users = require('./data/db')
 
-app.get('/', (req, res) => res.send('Hello World!'))
+app.get('/', (req, res, next) => res.send('Hello World!'))
 
 // GET /api/isers - Returns a list of all users
 
-app.get('/api/users', (req, res) => {
+app.get('/api/users', (req, res, next) => {
   users.find()
   .then(users => {
     res.status(200).json(users)
@@ -22,7 +25,7 @@ app.get('/api/users', (req, res) => {
 // POST /api/users - Adds a user to the database
 //  - If either name or bio are missing, return 400
 
-app.post('/api/users', (req, res) => {
+app.post('/api/users', (req, res, next) => {
   const {name, bio} = req.body
 
   if (!name || !bio) {
@@ -41,7 +44,7 @@ app.post('/api/users', (req, res) => {
 // GET /api/users/:id - Returns a single user
 //  - If user does not exist, return 404
 
-app.get('/api/users/:id', (req, res) => {
+app.get('/api/users/:id', (req, res, next) => {
   users.findById(req.params.id)
   .then(user => {
     if(user){
@@ -59,7 +62,7 @@ app.get('/api/users/:id', (req, res) => {
 // DELETE /api/users/:id - Removes a user from the database
 //   - If user does not exist, return 404
 
-app.delete('/api/users/:id', (req, res) => {
+app.delete('/api/users/:id', (req, res, next) => {
  users.remove(req.params.id)
  .then(user => {
    if (user && user > 0){
@@ -73,7 +76,7 @@ app.delete('/api/users/:id', (req, res) => {
  })
 })
 
-app.put('/api/users/:id', (req, res) => {
+app.put('/api/users/:id', (req, res, next) => {
   const {name, bio} = req.body
 
   if (!name || !bio) {

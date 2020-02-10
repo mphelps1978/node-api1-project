@@ -36,10 +36,25 @@ app.post('/api/users', (req, res) => {
       res.status(500).json({errorMessage: 'There was an error'})
     })
   }
+})
+
+// GET /api/users/:id - Returns a single user
+
+app.get('/api/users/:id', (req, res) => {
+  users.findById(req.params.id)
+  .then(user => {
+    if(user){
+      res.status(200).json(user)
+    } else {
+      res.status(404).json({errorMessage: 'The user with the specified ID does not exist'})
+    }
+  })
+  .catch(err => {
+    res.status(500).json({errorMessage: 'There was an error'})
+  })
+})
 
 
-
-});
 
 
 
